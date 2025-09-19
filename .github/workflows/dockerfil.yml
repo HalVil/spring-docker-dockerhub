@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: CI Pipeline
 
 on:
   push:
@@ -22,3 +22,14 @@ jobs:
           docker build -t halvorcontainer .
           docker tag halvorcontainer 244530008913.dkr.ecr.eu-west-1.amazonaws.com/halvor-repo
           docker push 244530008913.dkr.ecr.eu-west-1.amazonaws.com/halvor-repo
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push to Docker Hub
+        run: |
+          docker tag halvorcontainer ${{ secrets.DOCKERHUB_USERNAME }}/halvorcontainer
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/halvorcontainer
